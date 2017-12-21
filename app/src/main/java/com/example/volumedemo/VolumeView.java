@@ -16,9 +16,9 @@ import android.view.WindowManager;
 /**
  * 自定义音量显示控件
  *
- * @author zhaokaiqiang
+ * @author zhupengfei
  *
- * @time 2014年6月25日 上午11:42:10
+ * @time 2017年12月21日 上午11:42:10
  */
 public class VolumeView extends View {
 
