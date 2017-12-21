@@ -5,7 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -48,6 +51,9 @@ public class VolumeView extends View {
     // 最左侧音量矩形距离控件最左侧距离
     private int leftMargen = 0;
     private Context context;
+    private int[] mColors = { Color.RED, Color.MAGENTA,Color.GREEN,Color.BLACK};//进度条颜色（渐变色的2个点）
+
+
 
     public VolumeView(Context context) {
         super(context);
@@ -83,6 +89,8 @@ public class VolumeView extends View {
         rectMargen = (int) a.getDimension(R.styleable.VolumeView_rectMargen, DisplayUtil.dip2px(context,(float)12.5));
         recW = (int) a.getDimension(R.styleable.VolumeView_recW, DisplayUtil.dip2px(context,(float)7.5));
         rectH = (int) a.getDimension(R.styleable.VolumeView_rectH, DisplayUtil.dip2px(context,(float)35));//
+        a.recycle();//一定要回收TypedArray
+
     }
     /**
      * 得到屏幕宽度
@@ -104,6 +112,7 @@ public class VolumeView extends View {
 //        canvas.drawRect(0, 0, width, height, paint);//白色背景框
 
         // 绘制没有被选中的白色音量矩形
+        paint.setShader(null);
         paint.setColor(getResources().getColor(R.color.green));
         for (int i = current; i < MAX; i++) {
             canvas.drawRect(leftMargen + (i + 2) * rectMargen, (height - rectH) / 2,
@@ -112,8 +121,17 @@ public class VolumeView extends View {
             //left,top,right,bottom
         }
 
+
         // 绘制被选中的橘黄色音量矩形
-        paint.setColor(getResources().getColor(R.color.orange));
+        int count = mColors.length;
+        int[] colors = new int[count];
+        System.arraycopy(mColors, 0, colors, 0, count);
+//        paint.setColor(getResources().getColor(R.color.orange));
+
+        //设置渐变色区域
+        LinearGradient shader = new LinearGradient(leftMargen + (2) * rectMargen, 0, leftMargen + (20 + 2) * rectMargen + recW, 0, colors, null,
+                Shader.TileMode.CLAMP);//这个是音量渐变的区域
+        paint.setShader(shader);
         for (int i = 0; i < current; i++) {
             canvas.drawRect(leftMargen + (i + 2) * rectMargen, (height - rectH) / 2, leftMargen + (i + 2) * rectMargen + recW, (height - rectH) / 2 + rectH,
                     paint);
@@ -195,5 +213,4 @@ public class VolumeView extends View {
 //        this.onChangeListener = onChangeListener;
         this.onChangeListener = onChangeListener;
     }
-
 }
